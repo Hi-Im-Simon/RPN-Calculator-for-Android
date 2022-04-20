@@ -1,40 +1,55 @@
 package com.example.androidstudiotestapp
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.androidstudiotestapp.databinding.ActivityMainBinding
+import android.widget.Button
+import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(R.layout.activity_main)
 
-        var result = 0
+        val statusText: TextView = findViewById(R.id.output)
+        val numericButtons = arrayOf(but0, but1, but2, but3, but4, but5, but6, but7, but8, but9)
 
-        binding.but0.setOnClickListener() {
-            result *= 10
-            setStatusText(result.toString())
+        var result = "0"
+        statusText.text = result
+        var dot = false
+
+        numericButtons[0].setOnClickListener() {
+            if (result != "0") {
+                result = joinStrings(result, "0")
+                statusText.text = result
+            }
         }
-        binding.but1.setOnClickListener() {
-            result = result * 10 + 1
-            setStatusText(result.toString())
-        }
-        binding.but2.setOnClickListener() {
-            result = result * 10 + 2
-            setStatusText(result.toString())
-        }
-    }
 
-    private fun setStatusText(str: String) {
-        binding.statusText.text = str
-    }
+        for (i in 1..9) {
+            numericButtons[i].setOnClickListener() {
+                if (result == "0") result = ""
+                result = joinStrings(result, i.toString())
+                statusText.text = result
+            }
+        }
 
-    private fun getStatusText(): String {
-        return binding.statusText.text.toString()
+        butDot.setOnClickListener() {
+            if (!dot) {
+                result = joinStrings(result, ".")
+                statusText.text = result
+                dot = true
+            }
+        }
+
+        butBack.setOnClickListener() {
+            var lastChar = result.takeLast(1)
+            result = result.dropLast(1)
+            if (result.isEmpty()) result = "0"
+            if (lastChar == ".") dot = false
+            statusText.text = result
+        }
     }
 
     private fun joinStrings(str1: String, str2: String): String {
